@@ -8,6 +8,7 @@ import { CategoryIcon } from '../components/CategoryIcon';
 import { MessageState } from '../components/States';
 import { TextField } from '../components/TextField';
 import { RootStackScreenProps } from '../navigation/types';
+import { useAuthStore } from '../store/authStore';
 import { useBookingStore } from '../store/bookingStore';
 import { useProvidersStore } from '../store/providersStore';
 import { formatNaira } from '../utils/categories';
@@ -20,6 +21,7 @@ const NOTES_LIMIT = 200;
 
 export function BookingScreen({ route, navigation }: RootStackScreenProps<'Booking'>) {
   const provider = useProvidersStore((s) => s.getById(route.params.providerId));
+  const user = useAuthStore((s) => s.user);
   const addBooking = useBookingStore((s) => s.addBooking);
   const hasConflict = useBookingStore((s) => s.hasConflict);
 
@@ -28,7 +30,7 @@ export function BookingScreen({ route, navigation }: RootStackScreenProps<'Booki
   const [errors, setErrors] = useState<Errors>({});
   const [saving, setSaving] = useState(false);
 
-  if (!provider) {
+  if (!provider || !user) {
     return (
       <MessageState
         tone="error"
@@ -53,7 +55,7 @@ export function BookingScreen({ route, navigation }: RootStackScreenProps<'Booki
       return;
     }
 
-    if (hasConflict(provider.id, result.data.date, result.data.time)) {
+    if (hasConflict(user.email, provider.id, result.data.date, result.data.time)) {
       setErrors({ form: 'You already have a booking with this provider at that date and time.' });
       return;
     }
@@ -61,6 +63,7 @@ export function BookingScreen({ route, navigation }: RootStackScreenProps<'Booki
     setSaving(true);
     try {
       await addBooking({
+        userEmail: user.email,
         providerId: provider.id,
         providerName: provider.name,
         serviceName: provider.category,

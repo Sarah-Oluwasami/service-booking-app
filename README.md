@@ -47,4 +47,4 @@ Bookings are loaded from AsyncStorage when the app starts and saved again on eve
 - JSONPlaceholder only returns users, so I treat each user as a service provider. The category, description, rating and price are generated from the user's id, so the same provider always shows the same details.
 - You can book from tomorrow up to 14 days ahead, in 30-minute slots between 8:00 AM and 5:30 PM. Notes are optional (max 200 characters).
 - You can't book the same provider twice for the same date and time.
-- Bookings are stored on the device only, not per user.
+- Bookings are stored on the device and linked to the email you logged in with, so each user only sees their own bookings.

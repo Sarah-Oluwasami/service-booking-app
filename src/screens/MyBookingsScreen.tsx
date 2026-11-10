@@ -1,16 +1,23 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { ActivityIndicator, FlatList, Text, View } from 'react-native';
 
 import { BookingCard } from '../components/BookingCard';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { MessageState } from '../components/States';
 import { TabScreenProps } from '../navigation/types';
+import { useAuthStore } from '../store/authStore';
 import { useBookingStore } from '../store/bookingStore';
 import { Booking } from '../types';
 import { formatDate, formatTime } from '../utils/dates';
 
 export function MyBookingsScreen({ navigation }: TabScreenProps<'MyBookings'>) {
-  const bookings = useBookingStore((s) => s.bookings);
+  const userEmail = useAuthStore((s) => s.user?.email);
+  const allBookings = useBookingStore((s) => s.bookings);
+  // Only show the logged-in user's bookings.
+  const bookings = useMemo(
+    () => allBookings.filter((booking) => booking.userEmail === userEmail),
+    [allBookings, userEmail],
+  );
   const isHydrated = useBookingStore((s) => s.isHydrated);
   const deleteBooking = useBookingStore((s) => s.deleteBooking);
 

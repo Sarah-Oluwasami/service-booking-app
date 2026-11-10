@@ -12,8 +12,8 @@ interface BookingState {
   hydrate: () => Promise<void>;
   addBooking: (booking: NewBooking) => Promise<Booking>;
   deleteBooking: (id: string) => Promise<void>;
-  /** True if a booking already exists with this provider at the same date and time. */
-  hasConflict: (providerId: number, date: string, time: string) => boolean;
+  /** True if this user already has a booking with this provider at the same date and time. */
+  hasConflict: (userEmail: string, providerId: number, date: string, time: string) => boolean;
 }
 
 const createId = () => `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
@@ -50,9 +50,12 @@ export const useBookingStore = create<BookingState>((set, get) => ({
     set({ bookings });
   },
 
-  hasConflict: (providerId, date, time) =>
+  hasConflict: (userEmail, providerId, date, time) =>
     get().bookings.some(
       (booking) =>
-        booking.providerId === providerId && booking.date === date && booking.time === time,
+        booking.userEmail === userEmail &&
+        booking.providerId === providerId &&
+        booking.date === date &&
+        booking.time === time,
     ),
 }));

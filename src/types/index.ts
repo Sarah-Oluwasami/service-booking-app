@@ -27,6 +27,8 @@ export interface Provider {
 
 export interface Booking {
   id: string;
+  /** Email of the user who made the booking, so each user only sees their own. */
+  userEmail: string;
   providerId: number;
   providerName: string;
   serviceName: ServiceCategory;

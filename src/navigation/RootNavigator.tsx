@@ -37,7 +37,10 @@ function LogoutButton() {
 }
 
 function MainTabs() {
-  const bookingCount = useBookingStore((s) => s.bookings.length);
+  const userEmail = useAuthStore((s) => s.user?.email);
+  const bookingCount = useBookingStore(
+    (s) => s.bookings.filter((booking) => booking.userEmail === userEmail).length,
+  );
 
   return (
     <Tab.Navigator
